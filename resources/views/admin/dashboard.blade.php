@@ -102,42 +102,45 @@
                         <th>Status</th>
                         <th>Jumlah</th>
                         <th>Waktu Peminjaman</th>
+                         <th>Waktu Pengembalian</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($peminjamans as $p)
-                        <tr>
-                            <td>{{ $p->user?->name ?? 'User tidak ditemukan' }}</td>
-                            <td>{{ $p->barang?->nama_barang ?? 'Barang tidak ditemukan' }}</td>
-                            <td>
-                                @php
-                                    $status = strtolower($p->status);
-                                @endphp
+    @forelse($peminjamans as $p)
+        <tr>
+            <td>{{ $p->user?->name ?? 'User tidak ditemukan' }}</td>
+            <td>{{ $p->barang?->nama_barang ?? 'Barang tidak ditemukan' }}</td>
+            <td>
+                @php $status = strtolower($p->status); @endphp
 
-                                @if ($status === 'dipinjam')
-                                    <form action="{{ route('admin.peminjaman.return', $p->id) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        @method('PATCH')
-                                        <button type="submit" class="btn btn-sm btn-success"
-                                            onclick="return confirm('Yakin barang sudah dikembalikan?')">
-                                            Telah Dikembalikan
-                                        </button>
-                                    </form>
-                                @elseif ($status === 'dikembalikan')
-                                    <button class="btn btn-sm btn-dark" disabled>Dikembalikan</button>
-                                @else
-                                    <button class="btn btn-sm btn-secondary" disabled>{{ ucfirst($p->status) }}</button>
-                                @endif
-                            </td>
-                            <td>{{ $p->jumlah }}</td>
-                            <td>{{ $p->tgl_peminjaman->format('d-m-Y H:i') }}</td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="text-center">Belum ada riwayat peminjaman.</td>
-                        </tr>
-                    @endforelse
-                </tbody>
+                @if ($status === 'dipinjam')
+                    <form action="{{ route('admin.peminjaman.return', $p->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" class="btn btn-sm btn-success"
+                            onclick="return confirm('Yakin barang sudah dikembalikan?')">
+                            Telah Dikembalikan
+                        </button>
+                    </form>
+                @elseif ($status === 'dikembalikan')
+                    <button class="btn btn-sm btn-dark" disabled>Dikembalikan</button>
+                @else
+                    <button class="btn btn-sm btn-secondary" disabled>{{ ucfirst($p->status) }}</button>
+                @endif
+            </td>
+            <td>{{ $p->jumlah }}</td>
+            <td>{{ $p->tgl_peminjaman->format('d-m-Y H:i') }}</td>
+            <td>
+                {{ $p->tgl_pengembalian ? $p->tgl_pengembalian->format('d-m-Y H:i') : '-' }}
+            </td>
+        </tr>
+    @empty
+        <tr>
+            <td colspan="6" class="text-center">Belum ada riwayat peminjaman.</td>
+        </tr>
+    @endforelse
+</tbody>
+
             </table>
         </div>
     </div>
